@@ -1,0 +1,11 @@
+<VirtualHost *:80>
+    ServerName modelling.phpsc
+    DocumentRoot /var/www/summercamp/workshops/modelling/web
+    DirectoryIndex index.php
+
+    <Directory /var/www/summercamp/workshops/modelling/web>
+        Options FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+</VirtualHost>

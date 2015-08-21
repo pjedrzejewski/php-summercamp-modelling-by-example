@@ -1,0 +1,8 @@
+/vendor/
+/cache/
+/logs/
+.env
+/web/bundles
+bin/*
+behat.yml
+phpspec.yml
