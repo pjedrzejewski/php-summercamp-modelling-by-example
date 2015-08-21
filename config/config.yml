@@ -1,0 +1,38 @@
+framework:
+    secret: %secret%
+    templating:
+        engines: [twig]
+    profiler:
+        enabled: %kernel.debug%
+
+doctrine:
+    dbal:
+        driver:   %database_driver%
+        host:     %database_host%
+        port:     %database_port%
+        dbname:   %database_name%
+        user:     %database_user%
+        password: %database_password%
+        charset:  UTF8
+    orm:
+        auto_generate_proxy_classes: %kernel.debug%
+        entity_managers:
+            default:
+                auto_mapping: true
+                mappings:
+                    domain:
+                        type: yml
+                        prefix: App\Domain
+                        dir: "%kernel.root_dir%/config/doctrine"
+                        is_bundle: false
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: %monolog_action_level%
+            handler:      nested
+        nested:
+            type:  stream
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
