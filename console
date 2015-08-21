@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+umask(0000);
+
+set_time_limit(0);
+
+require_once __DIR__.'/config/autoload.php';
+require_once __DIR__.'/AppKernel.php';
+
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Debug\Debug;
+
+$dotenv = new Dotenv\Dotenv(__DIR__);
+$dotenv->load();
+$dotenv->required(['SYMFONY_ENV', 'SYMFONY_DEBUG']);
+
+$env = $_SERVER['SYMFONY_ENV'];
+$debug = $_SERVER['SYMFONY_DEBUG'];
+
+$input = new ArgvInput();
+
+if ($debug) {
+    Debug::enable();
+}
+
+$kernel = new AppKernel($env, $debug);
+$application = new Application($kernel);
+$application->run($input);
