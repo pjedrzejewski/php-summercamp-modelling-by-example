@@ -70,7 +70,8 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function aBookWithIsbnAndTitleWasAddedToTheCatalog($isbn, $title)
     {
-        throw new PendingException();
+        $this->currentBook = Book::withTitleAndIsbn(new BookTitle($title), new Isbn($isbn));
+        $this->catalog->add($this->currentBook);
     }
 
     /**
@@ -78,7 +79,10 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iTryToRemoveItFromTheCatalog()
     {
-        throw new PendingException();
+        if (null === $this->currentBook) {
+            throw new \LogicException('First create a book, before trying to remove it!');
+        }
+        $this->catalog->remove($this->currentBook->isbn());
     }
 
     /**
@@ -86,7 +90,10 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function thisBookShouldNoLongerBeInTheCatalog()
     {
-        throw new PendingException();
+        $this->assertCurrentBookIsDefined();
+        if (true === $this->catalog->hasBookWithIsbn($this->currentBook->isbn())) {
+            throw new \Exception('Book is still in the catalog...');
+        }
     }
 
     /**
