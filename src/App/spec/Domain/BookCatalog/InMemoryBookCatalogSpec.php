@@ -2,6 +2,7 @@
 
 namespace spec\App\Domain\BookCatalog;
 
+use App\Domain\BookCatalog\Search\BookSearchResults;
 use App\Domain\BookInterface;
 use App\Domain\Isbn;
 use PhpSpec\ObjectBehavior;
@@ -44,5 +45,32 @@ class InMemoryBookCatalogSpec extends ObjectBehavior
         $isbn->asString()->willReturn('978-1-56619-909-4');
 
         $this->shouldThrow(new \InvalidArgumentException('Book with ISBN "978-1-56619-909-4" does not exist!'))->duringRemove($isbn);
+    }
+    function it_returns_0_results_when_searching_by_isbn_and_empty(Isbn $isbn)
+    {
+        $isbn->asString()->willReturn('978-1-56619-909-4');
+
+        $this->searchByIsbn($isbn)->shouldHaveResultCount(0);
+    }
+    function it_returns_exactly_one_result_when_searching_by_exact_isbn_and_it_matches(BookInterface $book, Isbn $isbn)
+    {
+        $book->isbn()->willReturn($isbn);
+        $isbn->asString()->willReturn('978-1-56619-909-4');
+
+        $this->add($book);
+
+        $this->searchByIsbn($isbn)->shouldHaveResultCount(1);
+    }
+
+    public function getMatchers()
+    {
+        return [
+            'haveResultCount' => function ($subject, $key) {
+                if (!$subject instanceof BookSearchResults || !is_int($key)) {
+                    return false;
+                }
+                return $subject->count() === $key;
+            }
+        ];
     }
 }

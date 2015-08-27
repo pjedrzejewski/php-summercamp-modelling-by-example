@@ -3,6 +3,7 @@
 use App\Domain\Book;
 use App\Domain\BookCatalog\BookCatalogInterface;
 use App\Domain\BookCatalog\InMemoryBookCatalog;
+use App\Domain\BookCatalog\Search\BookSearchResults;
 use App\Domain\BookInterface;
 use App\Domain\BookTitle;
 use App\Domain\Isbn;
@@ -22,9 +23,15 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     private $currentBook;
 
+    /**
+     * @var BookSearchResults
+     */
+    private $currentBookSearchResults;
+
     public function __construct()
     {
         $this->catalog = new InMemoryBookCatalog();
+        $this->currentBookSearchResults = new BookSearchResults(array());
     }
 
     /**
@@ -101,7 +108,7 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iSearchCatalogByIsbnNumber($isbn)
     {
-        throw new PendingException();
+        $this->currentBookSearchResults = $this->catalog->searchByIsbn(new Isbn($isbn));
     }
 
     /**
@@ -109,7 +116,9 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iShouldFindASingleBook()
     {
-        throw new PendingException();
+        if (1 !== $actualCount = $this->currentBookSearchResults->count()) {
+            throw new \Exception(sprintf('Expected exactly 1 book, but got %d...', $actualCount));
+        }
     }
 
     /**

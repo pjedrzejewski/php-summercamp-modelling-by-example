@@ -2,6 +2,7 @@
 
 namespace App\Domain\BookCatalog;
 
+use App\Domain\BookCatalog\Search\BookSearchResults;
 use App\Domain\BookInterface;
 use App\Domain\Isbn;
 
@@ -25,5 +26,12 @@ class InMemoryBookCatalog implements BookCatalogInterface
     public function hasBookWithIsbn(Isbn $isbn)
     {
         return array_key_exists($isbn->asString(), $this->books);
+    }
+
+    public function searchByIsbn(Isbn $isbn)
+    {
+        $books = $this->hasBookWithIsbn($isbn) ? array($this->books[$isbn->asString()]) : array();
+
+        return BookSearchResults::fromArrayOfBooks($books);
     }
 }
