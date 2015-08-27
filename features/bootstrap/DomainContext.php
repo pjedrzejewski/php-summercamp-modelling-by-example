@@ -1,6 +1,8 @@
 <?php
 
 use App\Domain\Book;
+use App\Domain\BookCatalog\BookCatalogInterface;
+use App\Domain\BookCatalog\InMemoryBookCatalog;
 use App\Domain\BookInterface;
 use App\Domain\BookTitle;
 use App\Domain\Isbn;
@@ -11,9 +13,19 @@ use Behat\Behat\Tester\Exception\PendingException;
 class DomainContext implements Context, SnippetAcceptingContext
 {
     /**
+     * @var BookCatalogInterface
+     */
+    private $catalog;
+
+    /**
      * @var null|BookInterface
      */
     private $currentBook;
+
+    public function __construct()
+    {
+        $this->catalog = new InMemoryBookCatalog();
+    }
 
     /**
      * @Given I want to add a new book
@@ -36,7 +48,9 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iTryAddThisBookToTheCatalog()
     {
-        throw new PendingException();
+        $this->assertCurrentBookIsDefined();
+
+        $this->catalog->add($this->currentBook);
     }
 
     /**
@@ -44,7 +58,11 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function thisNewBookShouldBeInTheCatalog()
     {
-        throw new PendingException();
+        $this->assertCurrentBookIsDefined();
+
+        if (false === $this->catalog->hasBookWithIsbn($this->currentBook->isbn())) {
+            throw new \Exception('Book is not in the catalog...');
+        }
     }
 
     /**
@@ -101,5 +119,12 @@ class DomainContext implements Context, SnippetAcceptingContext
     public function iShouldReceiveAnErrorAboutNonUniqueBook()
     {
         throw new PendingException();
+    }
+
+    private function assertCurrentBookIsDefined()
+    {
+        if (null === $this->currentBook) {
+            throw new \LogicException('Current book must be defined!');
+        }
     }
 }
