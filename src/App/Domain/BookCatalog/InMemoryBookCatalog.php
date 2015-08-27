@@ -12,7 +12,13 @@ class InMemoryBookCatalog implements BookCatalogInterface
 
     public function add(BookInterface $book)
     {
-        $this->books[$book->isbn()->asString()] = $book;
+        $isbn = $book->isbn();
+
+        if ($this->hasBookWithIsbn($isbn)) {
+            throw new \InvalidArgumentException(sprintf('Book with ISBN "%s" already exists!', $isbn->asString()));
+        }
+
+        $this->books[$isbn->asString()] = $book;
     }
 
     public function remove(Isbn $isbn)

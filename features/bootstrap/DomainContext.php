@@ -126,15 +126,24 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iTryToCreateAnotherBookWithTheSameIsbnNumber()
     {
-        throw new PendingException();
-    }
+        $this->assertCurrentBookIsDefined();
 
+        $this->currentBook = Book::withTitleAndIsbn(new BookTitle('Random Title'), new Isbn($this->currentBook->isbn()->asString()));
+    }
     /**
      * @Then I should receive an error about non unique book
      */
     public function iShouldReceiveAnErrorAboutNonUniqueBook()
     {
-        throw new PendingException();
+        $this->assertCurrentBookIsDefined();
+
+        try {
+            $this->catalog->add($this->currentBook);
+        } catch (\Exception $exception) {
+            return;
+        }
+
+        throw new \Exception('Expected exception, but got none.');
     }
 
     private function assertCurrentBookIsDefined()
