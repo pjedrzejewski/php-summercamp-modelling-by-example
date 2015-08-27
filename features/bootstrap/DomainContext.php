@@ -7,11 +7,16 @@ use Behat\Behat\Tester\Exception\PendingException;
 class DomainContext implements Context, SnippetAcceptingContext
 {
     /**
+     * @var null|BookInterface
+     */
+    private $currentBook;
+
+    /**
      * @Given I want to add a new book
      */
     public function iWantToAddANewBook()
     {
-        throw new PendingException();
+        $this->currentBook = null;
     }
 
     /**
@@ -19,7 +24,7 @@ class DomainContext implements Context, SnippetAcceptingContext
      */
     public function iSetTheTitleToAndIsbnTo($title, $isbn)
     {
-        throw new PendingException();
+        $this->currentBook = Book::withTitleAndIsbn(new BookTitle($title), new Isbn($isbn));
     }
 
     /**
