@@ -1,0 +1,13 @@
+services:
+  app.doctrine.manager.book:
+    alias: doctrine.orm.default_entity_manager
+  app.doctrine.repository.book:
+    class: Doctrine\ORM\EntityRepository
+    factory: [@app.doctrine.manager.book, 'getRepository']
+    arguments: ['App\Domain\Book']
+
+  app.catalog:
+    class: App\Bundle\BookCatalog\DoctrineBookCatalog
+    arguments:
+      - @app.doctrine.manager.book
+      - @app.doctrine.repository.book

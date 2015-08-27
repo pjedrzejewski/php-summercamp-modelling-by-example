@@ -1,0 +1,9 @@
+App\Domain\Book:
+    type: entity
+    table: app_book
+    id:
+        isbn:
+            type: string
+    fields:
+        title:
+            type: string
