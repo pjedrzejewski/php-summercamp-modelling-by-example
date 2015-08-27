@@ -1,5 +1,9 @@
 <?php
 
+use App\Domain\Book;
+use App\Domain\BookInterface;
+use App\Domain\BookTitle;
+use App\Domain\Isbn;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Tester\Exception\PendingException;
